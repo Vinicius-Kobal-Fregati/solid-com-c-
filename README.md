@@ -1,1 +1,2 @@
-# solid-com-c-
+# Projeto para o curso de SOLID com CSharp
+

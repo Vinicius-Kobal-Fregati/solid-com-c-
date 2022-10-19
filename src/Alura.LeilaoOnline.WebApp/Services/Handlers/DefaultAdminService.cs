@@ -8,26 +8,30 @@ namespace Alura.LeilaoOnline.WebApp.Services.Handlers
     // Classe com solução padrão de serviço admin
     public class DefaultAdminService : IAdminService
     {
-        readonly ILeilaoDao _dao;
+        ILeilaoDao _dao;
+        // Como tem duas interfaces genéricas, em alguns casos precisamos usar as duas
+        ICategoriaDao _categoriaDao;
 
-        public DefaultAdminService(ILeilaoDao dao)
+        // Recebemos por argumento a nova interface, injeção de dependência.
+        public DefaultAdminService(ILeilaoDao dao, ICategoriaDao categoriaDao)
         {
             _dao = dao;
+            _categoriaDao = categoriaDao;
         }
 
         public IEnumerable<Categoria> ConsultaCategorias()
         {
-            return _dao.BuscarTodasCategorias();
+            return _categoriaDao.BuscarTodos();
         }
 
         public IEnumerable<Leilao> ConsultaLeiloes()
         {
-            return _dao.BuscarTodosLeiloes();
+            return _dao.BuscarTodos();
         }
 
         public Leilao ConsultaLeilaoPorId(int id)
         {
-            return _dao.BuscarLeilaoPorId(id);
+            return _dao.BuscarPorId(id);
         }
 
         public void CadastraLeilao(Leilao leilao)
@@ -50,7 +54,7 @@ namespace Alura.LeilaoOnline.WebApp.Services.Handlers
 
         public void FinalizaPregaoDoLeilaoComId(int id)
         {
-            var leilao = _dao.BuscarLeilaoPorId(id);
+            var leilao = _dao.BuscarPorId(id);
             if (leilao != null && leilao.Situacao == SituacaoLeilao.Pregao)
             {
                 leilao.Situacao = SituacaoLeilao.Finalizado;
@@ -61,7 +65,7 @@ namespace Alura.LeilaoOnline.WebApp.Services.Handlers
 
         public void IniciaPregaoDoLeilaoComId(int id)
         {
-            var leilao = _dao.BuscarLeilaoPorId(id);
+            var leilao = _dao.BuscarPorId(id);
             if (leilao != null && leilao.Situacao == SituacaoLeilao.Rascunho)
             {
                 leilao.Situacao = SituacaoLeilao.Pregao;

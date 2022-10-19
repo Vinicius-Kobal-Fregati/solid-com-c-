@@ -11,9 +11,9 @@ namespace Alura.LeilaoOnline.WebApp.Services.Handlers
         IAdminService _defaultService;
 
         // Padrão Decorator, quando não formos mudar seu comportamento chamamos o próprio método
-        public ArquivamentoAdminService(ILeilaoDao dao)
+        public ArquivamentoAdminService(ILeilaoDao dao, ICategoriaDao categoriaDao)
         {
-            _defaultService = new DefaultAdminService(dao);
+            _defaultService = new DefaultAdminService(dao, categoriaDao);
         }
 
         public void CadastraLeilao(Leilao leilao)

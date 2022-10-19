@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Alura.LeilaoOnline.WebApp.Models;
-using Alura.LeilaoOnline.WebApp.Dados;
-using Alura.LeilaoOnline.WebApp.Dados.EfCore;
+using Alura.LeilaoOnline.WebApp.Services;
 
 namespace Alura.LeilaoOnline.WebApp.Controllers
 {
@@ -11,60 +9,71 @@ namespace Alura.LeilaoOnline.WebApp.Controllers
     public class LeilaoApiController : ControllerBase
     {
         // Dependia de uma implementação, agora, de uma interface
-        ILeilaoDao _dao; 
+        IAdminService _service;
 
         // O Aspnet que instância essa classe, mas precisamos informar para ele adicionar de forma transiente o serviço IleilaoDao no configure
         // services (startup).
         // Para criar a instância de LeilaoApiController, precisamos passar um objeto que implementa ILeilaoDao.
-        public LeilaoApiController(ILeilaoDao dao)
+        public LeilaoApiController(IAdminService service)
         {
-            _dao = dao;
+            _service = service;
         }
 
         [HttpGet]
         public IActionResult EndpointGetLeiloes()
         {
-            var leiloes = _dao.BuscarLeiloes();
+            var leiloes = _service.ConsultaLeiloes();
             return Ok(leiloes);
         }
 
         [HttpGet("{id}")]
         public IActionResult EndpointGetLeilaoById(int id)
         {
-            var leilao = _dao.BuscarPorId(id);
-            if (leilao == null)
-            {
-                return NotFound();
-            }
+            var leilao = _service.ConsultaLeilaoPorId(id);
+            if (leilao == null) return NotFound();
             return Ok(leilao);
         }
 
         [HttpPost]
         public IActionResult EndpointPostLeilao(Leilao leilao)
         {
-            _dao.Alterar(leilao);
+            _service.CadastraLeilao(leilao);
             return Ok(leilao);
         }
 
         [HttpPut]
         public IActionResult EndpointPutLeilao(Leilao leilao)
         {
-            _dao.Alterar(leilao);
+            if (_service.ConsultaLeilaoPorId(leilao.Id) == null) return NotFound();
+            _service.ModificaLeilao(leilao);
             return Ok(leilao);
         }
 
         [HttpDelete("{id}")]
         public IActionResult EndpointDeleteLeilao(int id)
         {
-            var leilao = _dao.BuscarPorId(id);
-            if (leilao == null)
-            {
-                return NotFound();
-            }
-            _dao.Excluir(leilao);
+            var leilao = _service.ConsultaLeilaoPorId(id);
+            if (leilao == null) return NotFound();
+            _service.RemoveLeilao(leilao);
             return NoContent();
         }
 
+        [HttpPost("{id}/pregao")]
+        public IActionResult EndpointIniciaPregao(int id)
+        {
+            var leilao = _service.ConsultaLeilaoPorId(id);
+            if (leilao == null) return NotFound();
+            _service.IniciaPregaoDoLeilaoComId(id);
+            return Ok();
+        }
 
+        [HttpDelete("{id}/pregao")]
+        public IActionResult EndpointFinalizaPregao(int id)
+        {
+            var leilao = _service.ConsultaLeilaoPorId(id);
+            if (leilao == null) return NotFound();
+            _service.FinalizaPregaoDoLeilaoComId(id);
+            return Ok();
+        }
     }
 }

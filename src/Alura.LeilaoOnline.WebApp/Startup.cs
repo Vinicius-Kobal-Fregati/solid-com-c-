@@ -1,7 +1,9 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
 using Alura.LeilaoOnline.WebApp.Dados;
 using Alura.LeilaoOnline.WebApp.Dados.EfCore;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+using Alura.LeilaoOnline.WebApp.Services;
+using Alura.LeilaoOnline.WebApp.Services.Handlers;
 
 namespace Alura.LeilaoOnline.WebApp
 {
@@ -10,7 +12,12 @@ namespace Alura.LeilaoOnline.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             // Todo mundo que pedir essa instância, falo que será resolvido com essa implementação
+            services.AddTransient<ICategoriaDao, CategoriaDaoComEfCore>();
             services.AddTransient<ILeilaoDao, LeilaoDaoComEfCore>();
+            // Alterei a chamada de instância para quando o IAdminService for requerido.
+            services.AddTransient<IAdminService, ArquivamentoAdminService>();
+            services.AddTransient<IProdutoService, DefaultProdutoService>();
+            services.AddDbContext<AppDbContext>();
             services
                 .AddControllersWithViews()
                 .AddNewtonsoftJson(options => 

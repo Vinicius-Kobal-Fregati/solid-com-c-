@@ -6,7 +6,7 @@ Esse projeto foi realizado em conjunto com o curso "SOLID com C#: princípios da
 Um método deve realizar apenas uma função (tendo uma única responsabilidade), uma classe deve apenas precisar ser alterada por conta de uma única pessoa, função ou área de negócio (também tendo uma única responsabilidade, dentro dos parâmetros de uma classe).
 
 ## O = Open Closed Principle ##
-Minimize alterações no código pronto (que está fechado), mas permita que seu projeto continue estensível (aberto) para alterações, podemos respeitar esse princípio utilizando o padrão **Decorator**, ao invés de modificarmos nosso código, podimos criar uma nova que decora a existente e apenas altera o que for necessário, dessa forma expandimos nosso código sem prejudicar sua estabilidade.
+Minimize alterações no código pronto (que está fechado), mas permita que seu projeto continue extensível (aberto) para alterações, podemos respeitar esse princípio utilizando o padrão **Decorator**, ao invés de modificarmos nosso código, podimos criar uma nova que decora a existente e apenas altera o que for necessário, dessa forma expandimos nosso código sem prejudicar sua estabilidade.
 
 ## L = Liskov Substitution Principle ##
 Esse princípio foi desenvolvido pensando em heranças, mas também pode ser aplicado na implementação de interfaces, a Barbara Liskov descobriu que uma hierarquia problemática é aquela que os descendentes não podem ser substituídos pelos ancestrais, dessa forma, devemos fazer com que todas as implementações cumpram as promessas de suas abstrações.

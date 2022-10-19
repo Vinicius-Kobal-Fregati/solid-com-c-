@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Alura.LeilaoOnline.WebApp.Models;
 using Alura.LeilaoOnline.WebApp.Dados;
+using Alura.LeilaoOnline.WebApp.Dados.EfCore;
 
 namespace Alura.LeilaoOnline.WebApp.Controllers
 {
@@ -9,26 +10,28 @@ namespace Alura.LeilaoOnline.WebApp.Controllers
     [Route("/api/leiloes")]
     public class LeilaoApiController : ControllerBase
     {
-        AppDbContext _context;
-        LeilaoDao _leilaoDao;
+        // Dependia de uma implementação, agora, de uma interface
+        ILeilaoDao _dao; 
 
-        public LeilaoApiController()
+        // O Aspnet que instância essa classe, mas precisamos informar para ele adicionar de forma transiente o serviço IleilaoDao no configure
+        // services (startup).
+        // Para criar a instância de LeilaoApiController, precisamos passar um objeto que implementa ILeilaoDao.
+        public LeilaoApiController(ILeilaoDao dao)
         {
-            _context = new AppDbContext();
-            _leilaoDao = new LeilaoDao();
+            _dao = dao;
         }
 
         [HttpGet]
         public IActionResult EndpointGetLeiloes()
         {
-            var leiloes = _leilaoDao.BuscarLeiloes();
+            var leiloes = _dao.BuscarLeiloes();
             return Ok(leiloes);
         }
 
         [HttpGet("{id}")]
         public IActionResult EndpointGetLeilaoById(int id)
         {
-            var leilao = _leilaoDao.BuscarPorId(id);
+            var leilao = _dao.BuscarPorId(id);
             if (leilao == null)
             {
                 return NotFound();
@@ -39,26 +42,26 @@ namespace Alura.LeilaoOnline.WebApp.Controllers
         [HttpPost]
         public IActionResult EndpointPostLeilao(Leilao leilao)
         {
-            _leilaoDao.Alterar(leilao);
+            _dao.Alterar(leilao);
             return Ok(leilao);
         }
 
         [HttpPut]
         public IActionResult EndpointPutLeilao(Leilao leilao)
         {
-            _leilaoDao.Alterar(leilao);
+            _dao.Alterar(leilao);
             return Ok(leilao);
         }
 
         [HttpDelete("{id}")]
         public IActionResult EndpointDeleteLeilao(int id)
         {
-            var leilao = _leilaoDao.BuscarPorId(id);
+            var leilao = _dao.BuscarPorId(id);
             if (leilao == null)
             {
                 return NotFound();
             }
-            _leilaoDao.Excluir(leilao);
+            _dao.Excluir(leilao);
             return NoContent();
         }
 
